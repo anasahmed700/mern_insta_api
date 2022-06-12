@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
 
+require('./models/user');
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -10,6 +12,7 @@ mongoose.connect(MONGOURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
 mongoose.connection.on('connected', () => {
   console.log('mongodb connected');
 });
