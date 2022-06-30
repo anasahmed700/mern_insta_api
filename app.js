@@ -8,6 +8,10 @@ const mongoose = require('mongoose');
 const PORT = 5000;
 const {MONGOURI} = require('./keys');
 
+app.use(express.json()); // define json handler before route
+app.use(require('./routes/auth'));
+
+
 mongoose.connect(MONGOURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
