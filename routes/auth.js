@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+const bcrypt = require("bcryptjs");
 
 router.get("/", (req, res) => {
   console.log("sending get req to home");
@@ -15,22 +16,28 @@ router.post("/signup", (req, res) => {
   if (!name || !email || !password) {
     return res.status(422).json({ error: "Please add all required fields!" });
   }
-
+  // unique email validation
   User.findOne({ email: email })
     .then((savedUser) => {
       if (savedUser) {
         return res.status(422).json({ error: "User already exist!" });
       }
 
-      const user = new User({
-        email,
-        name,
-        password,
-      });
+      bcrypt.hash(password, 12)
+        .then((hashedPassword) => {
+          const user = new User({
+            email,
+            name,
+            password: hashedPassword,
+          });
 
-      user.save()
-        .then((user) => {
-          res.json({ message: "User has been saved", data:user });
+          user.save()
+            .then((user) => {
+              res.json({ message: "User has been saved", data: user });
+            })
+            .catch((err) => {
+              res.json(err);
+            });
         })
         .catch((err) => {
           res.json(err);
